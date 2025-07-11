@@ -9,15 +9,25 @@ import { connectDB } from "./lib/db.js";
 dotenv.config();
 const app = express();
 const PORT=process.env.PORT;
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174", 
+];
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
 
 app.listen(PORT,()=>{
