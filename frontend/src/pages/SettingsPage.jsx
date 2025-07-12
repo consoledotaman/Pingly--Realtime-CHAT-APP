@@ -17,8 +17,8 @@ const SettingsPage = () => {
           <h2 className="text-lg font-semibold">Theme</h2>
           <p className="text-sm text-base-content/70">Choose a theme for your chat interface</p>
         </div>
-
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 max-w-5xl">
+        <div className="flex flex-col lg:flex-row ">
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-2  w-full lg:w-[60%]">
           {THEMES.map((t) => (
             <button
               key={t}
@@ -47,9 +47,8 @@ const SettingsPage = () => {
             </button>
 
           ))}
-        </div>
-
-        {/* Preview Section */}
+         </div>
+        <div className="flex flex-col  items-center  w-full lg:w-[40%]">
         <h3 className="text-lg font-semibold mb-3">Preview</h3>
         <div className="rounded-xl border border-base-300 overflow-hidden bg-base-100 shadow-lg">
           <div className="p-4 bg-base-200">
@@ -115,6 +114,15 @@ const SettingsPage = () => {
             </div>
           </div>
         </div>
+
+        </div>
+        
+
+        </div>
+        
+
+        {/* Preview Section */}
+        
       </div>
     </div>
   );
