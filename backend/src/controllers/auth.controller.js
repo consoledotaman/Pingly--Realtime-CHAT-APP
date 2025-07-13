@@ -98,16 +98,17 @@ export const logout = (req,res)=>{
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
+    console.log("Received profilePic:", profilePic);
     const userId = req.user._id;
 
     if (!profilePic) {
       return res.status(400).json({ message: "Profile pic is required" });
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    // 🚫 Don't upload again — it's already uploaded on the frontend
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { profilePic: uploadResponse.secure_url },
+      { profilePic }, // ✅ directly save the Cloudinary URL
       { new: true }
     );
 
@@ -117,6 +118,7 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 export const checkAuth = (req,res) => {

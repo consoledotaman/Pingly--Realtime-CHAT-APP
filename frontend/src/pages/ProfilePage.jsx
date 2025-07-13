@@ -3,25 +3,45 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 import toast from "react-hot-toast";
 
+
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
 
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+  formData.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
 
-    reader.readAsDataURL(file);
+  try {
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
-    reader.onload = async () => {
-      const base64Image = reader.result;
-      setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
-    };
-  };
+    const data = await res.json();
+
+    if (data.secure_url) {
+      const imageUrl = data.secure_url;
+      setSelectedImg(imageUrl);
+      console.log("Uploading profilePic:", imageUrl);
+      await updateProfile({ profilePic: imageUrl });
+    } else {
+      toast.error("Failed to upload image");
+    }
+  } catch (err) {
+    console.error("Cloudinary upload error:", err);
+    toast.error("Image upload failed");
+  }
+};
 
 
 
