@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
+
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
+
     reader.readAsDataURL(file);
 
     reader.onload = async () => {
@@ -20,10 +23,12 @@ const ProfilePage = () => {
     };
   };
 
+
+
   return (
-    <div className="min-h-screen pt-20 px-4">
+    <div className="min-h-screen pt-20 px-4 w-[100vw]">
       <div className="max-w-xl mx-auto">
-        <div className="bg-base-300 rounded-xl p-6 md:p-8 space-y-8">
+        <div className="bg-base-300 rounded-xl p-6 md:p-8 space-y-8 ">
           {/* Heading */}
           <div className="text-center">
             <h1 className="text-2xl font-semibold">Profile</h1>

@@ -27,7 +27,19 @@ export const useAuthStore = create((set, get) => ({
       set({ isCheckingAuth: false });
     }
   },
+  checkAuth: async () => {
+    try {
+      const res = await axiosInstance.get("/auth/check");
 
+      set({ authUser: res.data });
+      get().connectSocket();
+    } catch (error) {
+      console.log("Error in checkAuth:", error);
+      set({ authUser: null });
+    } finally {
+      set({ isCheckingAuth: false });
+    }
+  },
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
@@ -58,17 +70,19 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logout: async () => {
-    try {
-      await axiosInstance.post("/auth/logout");
-      set({ authUser: null });
-      toast.success("Logged out successfully");
-      get().disconnectSocket();
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
-  },
+  try {
+    await axiosInstance.post("/auth/logout");
+    localStorage.removeItem("authToken"); // ✅ clear persisted auth
+    set({ authUser: null });
+    toast.success("Logged out successfully");
+    get().disconnectSocket();
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Logout failed");
+  }
+},
 
-  updateProfile: async (data) => {
+
+ updateProfile: async (data) => {
     set({ isUpdatingProfile: true });
     try {
       const res = await axiosInstance.put("/auth/update-profile", data);
