@@ -88,20 +88,33 @@ const MessageInput = () => {
 
           <button
             type="button"
-            className={`hidden sm:flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
+            className={`hidden sm:flex
+              items-center justify-center
+              rounded-md
+              
+              ${imagePreview ? "text-emerald-500" : "text-zinc-400"}
+              hover:text-emerald-500
+              transition-colors duration-200
+            `}
             onClick={() => fileInputRef.current?.click()}
           >
-            <Image size={20} />
+            <Image size={20} className="text-current" />
           </button>
+
         </div>
         <button
           type="submit"
-          className="btn btn-sm btn-circle"
+          className={`
+            p-2 rounded-md transition
+            bg-base-300
+            hover:bg-base-200
+            disabled:opacity-50 disabled:cursor-not-allowed
+          `}
           disabled={!text.trim() && !imagePreview}
         >
-          <Send size={22} />
-        </button>
+        <Send size={20} className="text-primary" />
+       </button>
+
       </form>
     </div>
   );
