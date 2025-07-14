@@ -1,5 +1,8 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
+import { sendPushNotification } from "../lib/firebaseAdmin.js";
+
+
 
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
@@ -42,12 +45,14 @@ export const sendMessage = async (req, res) => {
     const senderId = req.user._id;
 
     let imageUrl;
+
+    // ✅ Upload image to Cloudinary if present
     if (image) {
-      // Upload base64 image to cloudinary
       const uploadResponse = await cloudinary.uploader.upload(image);
       imageUrl = uploadResponse.secure_url;
     }
 
+    // ✅ Save message to DB
     const newMessage = new Message({
       senderId,
       receiverId,
@@ -57,14 +62,31 @@ export const sendMessage = async (req, res) => {
 
     await newMessage.save();
 
+    // ✅ Emit message via socket (real-time)
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
+    
+    // ✅ Push Notification logic
+    const receiver = await User.findById(receiverId);
+    const sender = await User.findById(senderId);
+    console.log("📲 Sending push to:", receiver.fcmToken);
+
+    if (receiver?.fcmToken) {
+      const title = `💬 New message from ${sender?.fullName || "Someone"}`;
+      const body = text
+        ? text.length > 100
+          ? text.slice(0, 100) + "..."
+          : text
+        : "📷 You received a new image";
+
+      await sendPushNotification(receiver.fcmToken, title, body);
+    }
 
     res.status(201).json(newMessage);
   } catch (error) {
-    console.log("Error in sendMessage controller: ", error.message);
+    console.log("❌ Error in sendMessage controller:", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
