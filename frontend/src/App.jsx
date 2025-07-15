@@ -39,7 +39,7 @@ const App = () => {
     const registration = await navigator.serviceWorker.ready;
 
     const fcmToken = await getToken(messaging, {
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      vapidKey: "BL1n-jYkPkst2Beyi3_m8R_ssgCAHBvQlCU6xNKIfqShUHKwj_Adp086c3sRRzQ2mqedlODAu7DpRJojaMumiBY",
       serviceWorkerRegistration: registration,
     });
 

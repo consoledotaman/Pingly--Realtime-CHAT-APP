@@ -9,39 +9,20 @@ const ProfilePage = () => {
   const [selectedImg, setSelectedImg] = useState(null);
 
 
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-  formData.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+    const reader = new FileReader();
 
-  try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    reader.readAsDataURL(file);
 
-    const data = await res.json();
-
-    if (data.secure_url) {
-      const imageUrl = data.secure_url;
-      setSelectedImg(imageUrl);
-      console.log("Uploading profilePic:", imageUrl);
-      await updateProfile({ profilePic: imageUrl });
-    } else {
-      toast.error("Failed to upload image");
-    }
-  } catch (err) {
-    console.error("Cloudinary upload error:", err);
-    toast.error("Image upload failed");
-  }
-};
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      setSelectedImg(base64Image);
+      await updateProfile({ profilePic: base64Image });
+    };
+  };
 
 
 
