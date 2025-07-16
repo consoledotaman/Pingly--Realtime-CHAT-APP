@@ -1,24 +1,25 @@
-// firebaseAdmin.js
+// backend/src/lib/firebaseAdmin.js
 import admin from "firebase-admin";
-import serviceAccount from "../firebase-service-account.json" assert { type: "json" };
+import fs from "fs";
+
+// ✅ Use fs to load JSON
+const serviceAccount = JSON.parse(
+  fs.readFileSync("backend/firebase-service-account.json", "utf8")
+);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
 export const sendPushNotification = async (fcmToken, title, body) => {
-  const message = {
-    notification: {
-      title,
-      body,
-    },
-    token: fcmToken,
-  };
-
   try {
+    const message = {
+      notification: { title, body },
+      token: fcmToken,
+    };
     const response = await admin.messaging().send(message);
     console.log("✅ Notification sent:", response);
-  } catch (err) {
-    console.error("❌ Error sending notification:", err);
+  } catch (error) {
+    console.error("❌ Failed to send notification:", error);
   }
 };
