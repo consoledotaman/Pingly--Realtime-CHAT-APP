@@ -1,11 +1,7 @@
 // backend/src/lib/firebaseAdmin.js
 import admin from "firebase-admin";
-import fs from "fs";
 
-// ✅ Use fs to load JSON
-const serviceAccount = JSON.parse(
-  fs.readFileSync("backend/firebase-service-account.json", "utf8")
-);
+const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
