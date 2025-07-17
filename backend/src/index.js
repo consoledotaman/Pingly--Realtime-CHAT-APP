@@ -13,7 +13,7 @@ dotenv.config();
 const PORT=process.env.PORT;
 const __dirname= path.resolve();
 const allowedOrigins = [
-  "https://pingly-chat.vercel.app/", 
+  "https://pingly-chat.onrender.com", 
 ];
 app.use(express.json());
 app.use(cookieParser());

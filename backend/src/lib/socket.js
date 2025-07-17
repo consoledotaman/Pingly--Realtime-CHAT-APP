@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://pingly-chat.vercel.app/"],
+    origin: ["https://pingly-chat.onrender.com"],
   },
 });
 
